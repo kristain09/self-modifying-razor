@@ -1,0 +1,60 @@
+@page "/todo"
+@using System.Text
+@using System.Text.RegularExpressions
+
+<h3>Todo: @Todos.Count(todo => !todo.IsDone)</h3><p>Empty</p><p>Empty</p><p>Empty</p><p>Empty</p><p>Empty</p>
+
+<ul>
+	@foreach (var todo in Todos)
+	{
+		<li>
+			<input type="checkbox" @bind="todo.IsDone" />
+			<input @bind="todo.Title" />
+		</li>
+	}
+</ul>
+
+<input placeholder="Something todo" @bind="NewTodo"/>
+<button @onclick="ReadCharacter">Add Todo</button>
+
+@code {
+	private List<TodoItem> Todos = new();	
+	public string? NewTodo;
+
+	// event Handler
+	/*private void AddToDo()
+	{
+		if (!string.IsNullOrWhiteSpace(NewTodo))
+		{
+			Todos.Add(new TodoItem { Title = NewTodo });
+			NewTodo = string.Empty;
+		}
+	}
+	*/
+
+	private void ReadCharacter()
+	{
+		string filePath = "C:\\Program1\\BlazorApp1\\BlazorApp1\\Pages\\Todo.razor";
+		string htmlContent = File.ReadAllText(filePath);
+		string pattern = @"</h3>";
+		Match match = Regex.Match(htmlContent, pattern, RegexOptions.IgnoreCase | RegexOptions.Singleline);
+		if (match.Success)
+		{
+			string bodyContent = match.Value;
+			Console.WriteLine("Found the first <body> tag.");
+
+			// Tambahkan <p>Empty</p> setelah <body> tag
+			string modifiedHtmlContent = htmlContent.Insert(match.Index + match.Length, "<p>Empty</p>");
+
+			// Tulis kembali isi file dengan perubahan
+			File.WriteAllText(filePath, modifiedHtmlContent);
+
+			Console.WriteLine("<p>Empty</p> has been added to the file.");
+		}
+		else
+		{
+			Console.WriteLine("No <body> tag found in the HTML file.");
+		}
+	}
+	}
+}
